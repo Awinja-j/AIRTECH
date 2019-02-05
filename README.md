@@ -28,11 +28,11 @@ The following set of steps are necessary to facilitate running the application l
 
 5. Create the database and run migrations
 
-        ```$ python manage.py db init```
+        $ python manage.py db init
 
-        ```$ python manage.py db migrate```
+        $ python manage.py db migrate
 
-        ```$ python manage.py db upgrade```
+        $ python manage.py db upgrade
 
 You are now set! you can now run the server using `python manage.py runserver` command
 
