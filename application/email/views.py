@@ -1,18 +1,22 @@
+import os
 import smtplib
 
-def reminder(**kwargs):
-      reminder = 'funtimes'
-      return reminder
+login = os.environ.get("LOGIN")
+password = os.environ.get("PASSWORD")
+from_addr = os.environ.get("FROM_ADDRESS")
+smtpserver ='smtp.gmail.com:587'
 
-def sendemail(from_addr, to_addr_list, cc_addr_list,
-              subject, message,
-              login, password,
-              smtpserver='smtp.gmail.com:587'):
+def email_type(type, customer, date, seat):
+      if type is 'reminder':
+        return 'Dear {}'.format(customer)
+      else:
+        return 'Dear {}'.format(customer)
+
+def sendemail(to_addr_list, subject, date, seat):
     header  = 'From: %s\n' % from_addr
     header += 'To: %s\n' % ','.join(to_addr_list)
-    header += 'Cc: %s\n' % ','.join(cc_addr_list)
     header += 'Subject: %s\n\n' % subject
-    message = header + message
+    message = header + email_type(subject, to_addr_list, date, seat )
 
     server = smtplib.SMTP(smtpserver)
     server.starttls()
