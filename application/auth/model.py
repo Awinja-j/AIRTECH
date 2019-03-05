@@ -73,7 +73,6 @@ class Passport(db.Model):
       created_on = db.Column(db.DateTime, nullable=False)
       date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
-
       def __init__(self, url):
             self.url = url
 
