@@ -4,8 +4,13 @@ from flask_login import logout_user
 from application.auth.model import User
 from flask_restful import abort, Resource
 from manage import db
+import boto3
 
 auths = HTTPTokenAuth(scheme='Token')
+def upload(url):
+    aws_access_key_id = 'so'
+    aws_secret_access_key = 'so'
+    pass
 
 class Register(Resource):
     @auths.verify_token
@@ -30,6 +35,7 @@ class Register(Resource):
                 if db.session.query(User).filter_by(email=email).first() is not None:
                     return jsonify(message=' This user already exists!'), 400
                 if passport:
+
                     user = User(name=name, email=email, password=password, passport=passport)
                 user = User(name=name, email=email, password=password, passport='www.hot.com')
                 user.set_password(password)
@@ -42,7 +48,7 @@ class Register(Resource):
             return 'enter something man!'
 
 class Login(Resource):
-    def post(self):
+    def post(self, request):
         if not request.json:
             return ("No JSON file detected.")
 

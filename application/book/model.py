@@ -11,8 +11,9 @@ class Booking(db.Model):
     aircraft_id = db.Column(db.String(255), nullable=False)
     seat_number = db.Column(db.String(255), nullable=False, unique=True)
     ticket_status = db.Column(db.String(255), nullable=False)
-    created_on = db.Column(db.DateTime, nullable=False)
-    date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    created_on = db.Column(db.dateTime, nullable=False)
+    date_modified = db.Column(db.dateTime, default=db.func.current_timestamp(),
+                              onupdate=db.func.current_timestamp())
 
     def __init__(self, email):
         """initialize with name."""
@@ -51,7 +52,10 @@ class Reserve(db.Model):
       __tablename__ = "reserve"
       id = db.Column(db.Integer, primary_key=True)
       client_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-      booking_id = db.Column(db.Integer, db.ForeignKey("booking.id"))
+      flight_number = db.Column(db.String(255), nullable=False, unique=True)
+      date_of_travel = db.Column(db.String(255), nullable=False, unique=True)
+      destination = db.Column(db.String(255), nullable=False, unique=True)
+      depature = db.Column(db.String(255), nullable=False, unique=True)
       seat_number = db.Column(db.String(255), nullable=False, unique=True)
 
       def __init__(self, email):
@@ -60,6 +64,7 @@ class Reserve(db.Model):
 
       def __repr__(self):
         return "<User: {}>".format(self.email)
+
 
 
 
