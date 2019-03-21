@@ -56,7 +56,8 @@ class Reserve_(Resource):
         date_of_travel = request.json.get('date_of_travel')
         destination = request.json.get('destination')
         depature = request.json.get('depature)
-        flight_ number, seat_number = self.generate_flight_detailsgenerate(date_of_travel)
+        flight_ number, seat_number = self.generate_flight_detailsgenerate(date_of_travel
+      =)
 
     def get(self, request):
         '''this checks how many people have made reservations for a particular flight on a specific day'''

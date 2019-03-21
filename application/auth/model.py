@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, \
 from flask_login import UserMixin
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
-from manage import app, db, bcrypt
+from manage import app, db
 
 
 class User(db.Model, UserMixin):
@@ -13,21 +13,21 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
-    passport = db.relationship('passport', backref='user', lazy='dynamic')
-    created_on = db.Column(db.DateTime, nullable=False)
+    passport = db.Column(db.String(1024), nullable=True)
+    created_on = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
 
-    def __init__(self, name, email, password):
+    def __init__(self, name, email, password, passport):
         """initialize with name."""
         self.name = name
         self.email = email
         self.set_password(password)
-        self.registered_on = datetime.datetime.now()
+        self.registered_on = datetime.now()
+        self.passport = passport
 
     def set_password(self, password):
-        self.password = bcrypt.generate_password_hash(password, app.config.get('BCRYPT_LOG_ROUNDS')
-        ).decode()
+        self.password = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
@@ -64,17 +64,3 @@ class User(db.Model, UserMixin):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-
-class Passport(db.Model):
-      __tablename__ = "passport"
-      id = db.Column(db.Integer, primary_key=True)
-      url = db.Column(db.String(255), nullable=True)
-      user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-      created_on = db.Column(db.DateTime, nullable=False)
-      date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
-
-      def __init__(self, url):
-            self.url = url
-
-      def __repr__(self):
-            return "<passport: {}>".format(self.url)
