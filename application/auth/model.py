@@ -5,6 +5,7 @@ from flask_login import UserMixin
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 from manage import app, db
+import boto3
 
 
 class User(db.Model, UserMixin):
@@ -24,7 +25,7 @@ class User(db.Model, UserMixin):
         self.email = email
         self.set_password(password)
         self.registered_on = datetime.now()
-        self.passport = passport
+        self.passport = upload(passport)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -34,8 +35,16 @@ class User(db.Model, UserMixin):
 
     def generate_auth_token(self, expiration=3600):
         s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
-        # s = Serializer(os.getenv('SECRET_KEY'), expires_in=expiration)
         return s.dumps({'id': self.id})
+
+    def upload(self, passport):
+        s3 = boto3.client('s3')
+        filename = passport
+        bucket_name = app.config['BUCKET_NAME']
+        s3.upload_file(filename, bucket_name, filename)
+
+    def delete(self, passport):
+          pass
 
     @staticmethod
     def verify_auth_token(token):
@@ -43,12 +52,11 @@ class User(db.Model, UserMixin):
         try:
             data = s.loads(token)
         except SignatureExpired:
-            return None  # valid token, but expired
+            return "expired" # valid token, but expired
         except BadSignature:
-            return None  # invalid token
+            return "bad token"  # invalid token
         user = User.query.get(data['id'])
         return user
-
 
     def __repr__(self):
         return "<User: {}>".format(self.email)

@@ -3,24 +3,21 @@ from flask_httpauth import HTTPTokenAuth
 from flask_login import logout_user
 from application.auth.model import User
 from flask_restful import abort, Resource
-from manage import db
-import boto3, json
+from manage import db, app
+import json
 
 auths = HTTPTokenAuth(scheme='Token')
-def upload(url):
-    aws_access_key_id = 'so'
-    aws_secret_access_key = 'so'
-    pass
+
+@auths.verify_token
+def verify_token(token):
+    # authenticate by token only
+    user = User.verify_auth_token(token)
+    if not user:
+        return False
+    g.user = user
+    return True
 
 class Register(Resource):
-    @auths.verify_token
-    def verify_token(self,token):
-        # authenticate by token only
-        user = User.verify_auth_token(token)
-        if not user:
-            return False
-        g.user = user
-        return True
 
     def post(self):
         """Register a user"""
@@ -64,8 +61,7 @@ class Login(Resource):
                 return ("error! Invalid password")
             else:
                 token = user.generate_auth_token()
-                return ({'Authorization': token.decode('ascii')})
-                # return jsonify(message="login succesfull! \n token : {}".format(token), token=token.decode()), 302
+                return ({'Authorization': token.decode()})
         except:
             return 'please enter your email and password to login'
 
@@ -73,10 +69,66 @@ class Login(Resource):
     def get(self):
           return 'please enter your email and password to login'
 
-    @auths.login_required
     def logout(self):
-        logout_user()
-        return ("Logout succesfull")
+        token = request.headers.get('Authorization')
+        if token:
+            user_id = verify_token(token)
+            if user_id:
+                logout_user()
+                return ("Logout succesfull")
+
+class Profile(Resource):
+
+      def get(self):
+        token = request.headers.get('Authorization')
+        if token:
+            user_id = verify_token(token)
+            if user_id:
+                return 'you can view your details here'
+            else:
+                return 'no token'
+
+      def delete(self):
+        token = request.headers.get('Authorization')
+        if token:
+          user_id = verify_token(token)
+          if user_id:
+              try:
+                email = request.json.get('email')
+                password = request.json.get('password')
+
+                user = User.query.get(email=email)
+                if not user or user.email != g.user.email:
+                      return "email not found"
+                else:
+                      db.session.delete(user)
+                      db.session.commit()
+                      return 'profile deleted succesfully'
+              except:
+                return 'what is your email address?'
+
+      def put(self):
+          token = request.headers.get('Authorization')
+          if token:
+              user_id = verify_token(token)
+              if user_id:
+                  try:
+                    email = request.json.get('email')
+                    user = User.query.get(email=email)
+
+                    if not user or user.email != g.user.email:
+                          return "email not found"
+
+                    if request.json.get('name'):
+                      user.name = request.json.get('name')
+                    if request.json.get('password'):
+                      user.password = request.json.get('password')
+                    if request.json.get('passport'):
+                      user.passport = request.json.get('passport')
+
+                  except:
+                    return 'what is your email address?'
+
 
 
 class Index(Resource):

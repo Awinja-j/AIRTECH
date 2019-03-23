@@ -10,6 +10,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:@localhost/airtech-api'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BCRYPT_LOG_ROUNDS = 'funtimes'
+    BUCKET_NAME = 'airtech-ke'
 
 
 class ProductionConfig(Config):
