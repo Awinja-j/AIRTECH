@@ -36,15 +36,29 @@ id, to_addr_list, subject, date, seat = check_day_before()
 scheduler.add_job(sendemail(to_addr_list, subject, date, seat), 'interval', minutes=2, id=id)
 scheduler.start()
 class Book(Resource):
-    def book():
+    '''pay for a seat'''
+    def book(self):
       return 'funtimes'
-    def get():
-          pass
-    def post():
-          pass
+      
+    def get(self):
+        '''check the details of your flight'''
+        return 'book a seat'
+    def post(self):
+        '''book a seat'''
+        pass
 
+class Get_All(Resource):
+      '''get a list of all the flight destinations'''
+      def get(self):
+            return 'get all'
+
+class Get_empty_seats(Resource):
+      '''get a list of all empty seats available in the destination you are going'''
+       def get(self):
+            return 'get empty seats'
 
 class Reserve_(Resource):
+      '''reserve a seat'''
 
     def generate_flight_details(self):
         '''this generates flight details like plane number'''
@@ -78,3 +92,8 @@ class Reserve_(Resource):
             reservation = db.session.query(Reserve).filter_by(light_number=flight, date_of_travel=day)
             details.append(reservation)
         return details
+
+
+ class Email(Resource):
+      '''send email'''
+      pass

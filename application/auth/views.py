@@ -68,15 +68,14 @@ class Login(Resource):
 
     def get(self):
           return 'please enter your email and password to login'
-
-    def logout(self):
-        token = request.headers.get('Authorization')
+class Logout(Resource):
+       def get(self):
+            token = request.headers.get('Authorization')
         if token:
             user_id = verify_token(token)
             if user_id:
                 logout_user()
                 return ("Logout succesfull")
-
 class Profile(Resource):
 
       def get(self):
