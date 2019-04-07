@@ -10,4 +10,4 @@ script:
 - coverage run application/book tests.py
 after_success:
 - coveralls
-dist: precise
+dist: xenial
