@@ -7,7 +7,9 @@ install:
 script:
 
 - cd application/auth && coverage run test_login.py
+- cd ~
 - cd application/auth && coverage run test_registration.py
+- cd ~
 - cd application/book && coverage run tests.py
 after_success:
 - coveralls
