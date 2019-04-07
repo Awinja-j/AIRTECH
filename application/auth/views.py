@@ -1,4 +1,4 @@
-from flask import g, jsonify, request
+from flask import g, jsonify, request, redirect, url_for
 from flask_httpauth import HTTPTokenAuth
 from flask_login import logout_user
 from application.auth.model import User
@@ -65,17 +65,18 @@ class Login(Resource):
         except:
             return 'please enter your email and password to login'
 
-
     def get(self):
           return 'please enter your email and password to login'
+
 class Logout(Resource):
        def get(self):
             token = request.headers.get('Authorization')
-        if token:
-            user_id = verify_token(token)
-            if user_id:
-                logout_user()
-                return ("Logout succesfull")
+            if token:
+                user_id = verify_token(token)
+                if user_id:
+                    logout_user()
+                    return redirect(url_for('index'))
+
 class Profile(Resource):
 
       def get(self):
