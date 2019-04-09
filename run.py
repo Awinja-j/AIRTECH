@@ -24,7 +24,7 @@ api.add_resource(Logout, '/auth/logout')
 api.add_resource(Index, '/')
 api.add_resource(Profile, '/auth/profile')
 api.add_resource(Book, '/api/book')
-api.add_resource(Reserved, '/api/get_reserved_seats')
+api.add_resource(Get_reserved_seats, '/api/get_reserved_seats')
 api.add_resource(Get_All, '/api/get_all')
 api.add_resource(Get_empty_seats, '/api/get_empty_seats')
 

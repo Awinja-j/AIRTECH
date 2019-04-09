@@ -156,7 +156,7 @@ class Get_empty_seats(Resource):
           #   for y in range(20):
           #       if x != y:
           #         return y
-          
+
 class Get_reserved_seats(Resource):
       def get(Resource):
             '''will only return reserved seats'''

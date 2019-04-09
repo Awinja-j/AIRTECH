@@ -1,6 +1,6 @@
 import unittest
 
-from manage import db, app
+from application.auth.manage import db, app
 
 class BookingTestCase(unittest.TestCase):
       '''This tests the booking functionality'''

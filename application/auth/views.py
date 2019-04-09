@@ -5,6 +5,7 @@ from application.auth.model import User
 from flask_restful import abort, Resource
 from manage import db, app
 import json
+import re
 
 auths = HTTPTokenAuth(scheme='Token')
 
@@ -18,6 +19,27 @@ def verify_token(token):
     return True
 
 class Register(Resource):
+    '''checks if email is valid'''
+    def isValidEmail(email):
+      if len(email)>7:
+          m = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
+          if m == None:
+              return False
+          else:
+              return True
+      else:
+          return False
+
+    def is_password_strong(password):
+        length_regex = re.compile(r'.{8,}')
+        uppercase_regex = re.compile(r'[A-Z]')
+        lowercase_regex = re.compile(r'[a-z]')
+        digit_regex = re.compile(r'[0-9]')
+
+        return (length_regex.search(password) is not None
+                and uppercase_regex.search(password) is not None
+                and lowercase_regex.search(password) is not None
+                and digit_regex.search(password) is not None)
 
     def post(self):
         """Register a user"""
@@ -28,19 +50,20 @@ class Register(Resource):
             passport = request.json.get('passport')
             if email is "Null" or password is "Null" or name is "Null":
                 return ('missing name, email or password!')
-            if len(password) >= 6:
-                if db.session.query(User).filter_by(email=email).first() is not None:
-                    return ("This user already exists!")
-                if passport:
-                    user = User(name=name, email=email, password=password, passport=passport)
-                else:
-                    user = User(name=name, email=email, password=password, passport='www.hot.com')
-                user.set_password(password)
-                db.session.add(user)
-                db.session.commit()
-                return ("Successfully registered {0}".format(email))
+            if self.isValidEmail is False:
+                  return ("This is not a valid email address")
+            if self.is_password_strong() is False:
+                  return "Please enter a strong password"
+            if db.session.query(User).filter_by(email=email).first() is not None:
+                return ("This user already exists!")
+            if passport:
+                user = User(name=name, email=email, password=password, passport=passport)
             else:
-                return ('password characters shouold be more than six! Please try again!')
+              user = User(name=name, email=email, password=password, passport='www.hot.com')
+              user.set_password(password)
+              db.session.add(user)
+              db.session.commit()
+              return ("Successfully registered {0}".format(email))
         except:
             return 'please enter your name, email, password and path to your passport picture'
 
