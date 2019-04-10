@@ -8,42 +8,30 @@ from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from flask_restful import abort, Resource
 from manage import db
 from application.book.model import Booking, Email
-
-
-
-# jobstores = {
-#     'default': SQLAlchemyJobStore(url='sqlite:///jobs.sqlite')
-# }
-# executors = {
-#     'default': ThreadPoolExecutor(20),
-#     'processpool': ProcessPoolExecutor(5)
-# }
-# job_defaults = {
-#     'coalesce': False,
-#     'max_instances': 3
-# }
-# scheduler = BackgroundScheduler()
-
-# def check_day_before():
-#       id = 1
-#       to_addr_list = 'jojo@gmail.com'
-#       subject = 'reminder'
-#       date = '12/03/2019'
-#       seat = '2d'
-#       return id, to_addr_list, subject, date, seat
-
-# id, to_addr_list, subject, date, seat = check_day_before()
-
-# scheduler.add_job(sendemail(to_addr_list, subject, date, seat), 'interval', minutes=2, id=id)
-# scheduler.start()
+import flight_detials
+from application.book.flight_details import flight_details
+from collections import Counter
 
 class Book(Resource):
     '''pay for a seat'''
     airports = ["nairobi", "kampala", "mombasa", "kigali", "windhoek", "kakamega"]
+    available_seats = []
+    booked = {} #get this data from the db
+    def flight_details(depature, destination):
+          for flight in flight_details:
+                if depature and destination in flight[destination]:
+                      num = Counter(booked)
+                        for book in num:
+                              if book[value] < flight[capacity]:
+                                    return flight
 
     def generate_flight_number(self):
         num = uuid.uuid4()
         return "{}{}".format('AIRTECH-S',num)
+
+    def generate_seat_number(self):
+          pass
+
 
     def get(self):
         '''check the details of your flight using  the seat number'''
@@ -54,6 +42,7 @@ class Book(Resource):
         #ToFix: how do we know the one searching is the owner of the seat?, check person searchin's id and
         # return details only if the user email(person should be logged in) in ticker and person searching are the same
         return my_details
+
 
     def post(self):
         '''book a seat'''
@@ -71,7 +60,7 @@ class Book(Resource):
         #ToFix: Booking for a past date
         #ToFix: Booking without a seat number, generate seat number for them
         #ToFix: Reserve without a seat number, generate seat number for them
-        #Tofix: Book with missing ticket status, assume reserve of mpesa is missing
+        #Tofix: Book with missing ticket status, assume reserve if mpesa is missing
         #Tofix: Book with missing ticket status, assume booked if mpesa is available
         #ToFix: user can reserve without a seat number.
         #to fix: user must enter destination/depature for both booking and reserve
@@ -180,17 +169,47 @@ class Email(Resource):
             return 'Dear {}'.format(customer)
 
     def sendemail(self, to_addr_list, subject, date, seat):
-        # header  = 'From: %s\n' % from_addr
-        # header += 'To: %s\n' % ','.join(to_addr_list)
-        # header += 'Subject: %s\n\n' % subject
-        # message = header + email_type(subject, to_addr_list, date, seat )
+        header  = 'From: %s\n' % from_addr
+        header += 'To: %s\n' % ','.join(to_addr_list)
+        header += 'Subject: %s\n\n' % subject
+        message = header + email_type(subject, to_addr_list, date, seat )
 
-        # server = smtplib.SMTP(smtpserver)
-        # server.starttls()
-        # server.login(login,password)
-        # problems = server.sendmail(from_addr, to_addr_list, message)
-        # server.quit()
+        server = smtplib.SMTP(smtpserver)
+        server.starttls()
+        server.login(login,password)
+        problems = server.sendmail(from_addr, to_addr_list, message)
+        server.quit()
         return 'problems'
 
     def get(self):
         return 'just get man!'
+
+class Scheduler(Resource):
+      '''schedules events'''
+
+      def get():
+          jobstores = {
+              'default': SQLAlchemyJobStore(url='sqlite:///jobs.sqlite')
+          }
+          executors = {
+              'default': ThreadPoolExecutor(20),
+              'processpool': ProcessPoolExecutor(5)
+          }
+          job_defaults = {
+              'coalesce': False,
+              'max_instances': 3
+          }
+          scheduler = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=utc)
+
+      def check_day_before():
+            id = 1
+            to_addr_list = 'jojo@gmail.com'
+            subject = 'reminder'
+            date = '12/03/2019'
+            seat = '2d'
+            return id, to_addr_list, subject, date, seat
+
+      id, to_addr_list, subject, date, seat = check_day_before()
+
+      scheduler.add_job(Email.sendemail(to_addr_list, subject, date, seat), 'interval', minutes=2, id=id)
+      scheduler.start()

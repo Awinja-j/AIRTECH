@@ -3,6 +3,9 @@ from manage import app, db
 from config import TestingConfig
 import json
 
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+
 class RegistrationTestCase(unittest.TestCase):
     def setUp(self):
         """Define test variables and initialize app."""
