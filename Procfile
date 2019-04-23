@@ -1,4 +1,3 @@
-clock: python email/views.py
 web: gunicorn application.wsgi --log-file -
 init: python manage.py makemigrations
 migrate: python manage.py migrate
