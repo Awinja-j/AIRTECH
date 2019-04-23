@@ -8,8 +8,7 @@ from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from flask_restful import abort, Resource
 from manage import db
 from application.book.model import Booking, Email
-import flight_detials
-from application.book.flight_details import flight_details
+from application.book.flights import flight_details
 from collections import Counter
 
 class Book(Resource):
@@ -17,20 +16,30 @@ class Book(Resource):
     airports = ["nairobi", "kampala", "mombasa", "kigali", "windhoek", "kakamega"]
     available_seats = []
     booked = {} #get this data from the db
-    def flight_details(depature, destination):
-          for flight in flight_details:
-                if depature and destination in flight[destination]:
-                      num = Counter(booked)
-                        for book in num:
-                              if book[value] < flight[capacity]:
-                                    return flight
+    def find_flight(self, depature, destination):
+        '''this returns flight details when a flight has free space'''
+        for plane_type, plane_details in flight_details.items():
+          print(depature.lower(), destination.lower())
+          if depature and destination in plane_details['destinations']:
+              booked = Counter(self.booked)
+              for key, value in booked.items():
+                if key == plane_type:
+                  if value < plane_details['capacity']:
+                      return plane_type, plane_details
 
     def generate_flight_number(self):
         num = uuid.uuid4()
         return "{}{}".format('AIRTECH-S',num)
 
-    def generate_seat_number(self):
-          pass
+    def generate_seat_number(self, destination, depature):
+        """ generates a seat number """
+        flight_info = self.find_flight(destination, depature)
+        if flight_info is None:
+              return "That flight is fully booked"
+
+
+
+
 
 
     def get(self):
@@ -184,32 +193,32 @@ class Email(Resource):
     def get(self):
         return 'just get man!'
 
-class Scheduler(Resource):
-      '''schedules events'''
+# class Scheduler(Resource):
+#       '''schedules events'''
 
-      def get():
-          jobstores = {
-              'default': SQLAlchemyJobStore(url='sqlite:///jobs.sqlite')
-          }
-          executors = {
-              'default': ThreadPoolExecutor(20),
-              'processpool': ProcessPoolExecutor(5)
-          }
-          job_defaults = {
-              'coalesce': False,
-              'max_instances': 3
-          }
-          scheduler = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=utc)
+#       def get():
+#           jobstores = {
+#               'default': SQLAlchemyJobStore(url='sqlite:///jobs.sqlite')
+#           }
+#           executors = {
+#               'default': ThreadPoolExecutor(20),
+#               'processpool': ProcessPoolExecutor(5)
+#           }
+#           job_defaults = {
+#               'coalesce': False,
+#               'max_instances': 3
+#           }
+#           scheduler = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=utc)
 
-      def check_day_before():
-            id = 1
-            to_addr_list = 'jojo@gmail.com'
-            subject = 'reminder'
-            date = '12/03/2019'
-            seat = '2d'
-            return id, to_addr_list, subject, date, seat
+#       def check_day_before():
+#             id = 1
+#             to_addr_list = 'jojo@gmail.com'
+#             subject = 'reminder'
+#             date = '12/03/2019'
+#             seat = '2d'
+#             return id, to_addr_list, subject, date, seat
 
-      id, to_addr_list, subject, date, seat = check_day_before()
+#       id, to_addr_list, subject, date, seat = check_day_before()
 
-      scheduler.add_job(Email.sendemail(to_addr_list, subject, date, seat), 'interval', minutes=2, id=id)
-      scheduler.start()
+#       Scheduler.add_job(Email.sendemail(to_addr_list, subject, date, seat), 'interval', minutes=2, id=id)
+#       Scheduler.start()
