@@ -224,6 +224,7 @@ class Book(Resource):
 
             db.session.add(booking)
             db.session.commit()
+            self.sendemail() # to fix
             return ("Seat number{0}{}succesfully".format(seat_number, trip_type))
 
         except:
