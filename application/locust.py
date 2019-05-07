@@ -25,7 +25,7 @@ def get_empty_seats(l):
     l.client.get("/api/get_empty_seats")
 
 class UserBehavior(TaskSet):
-    tasks = {index: 2, profile: 1}
+    tasks = {index: 2, get_all: 1}
 
     def on_start(self):
         login(self)
