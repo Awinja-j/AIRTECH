@@ -10,18 +10,19 @@ def logout(l):
     l.client.post("/auth/logout", {"email":"jojo@email.com", "password": "password1234",})
 
 def index(l):
-    l.client.get("/")
+    l.client.get("/api")
 
-def flight_seats(l):
-    l.client.get("/book/flight_seats")
 def book_ticket(l):
-    l.client.get("/book/book_ticket")
-def profile(l):
-    l.client.get("/auth/profile")
-def profile(l):
-    l.client.get("/auth/profile")
-def profile(l):
-    l.client.get("/auth/profile")
+    l.client.get("/api/book_ticket")
+
+def get_reserved_seats(l):
+    l.client.get("/api/get_reserved_seats")
+
+def get_all(l):
+    l.client.get("/api/get_all")
+
+def get_empty_seats(l):
+    l.client.get("/api/get_empty_seats")
 
 class UserBehavior(TaskSet):
     tasks = {index: 2, profile: 1}
