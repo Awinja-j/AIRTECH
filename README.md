@@ -48,6 +48,7 @@ Interact with the API, send http requests using Postman
 | /api/get_empty_seats        | GET          | Get a list of empty seats in the flight                       |
 | /api/book      | POST         | book/reserve a ticket |
 | /api/get_reserved_seats     | GET         | get a list of all seats that have been reserved                                        |
+|/api/get_all | GET | Get all seats |
 | /          | GET         | Index/ Welcome page                         |
 
 To run the load tester, use the following commands:
