@@ -45,10 +45,15 @@ Interact with the API, send http requests using Postman
 | /auth/upload_passport | POST         | upload passport photo if not done during registration               |
 | /auth/login           | POST         | login to the api                                                    |
 | /auth/logout          | POST         | logout of the api                                                   |
-| /flight_seats         | GET          | see the status of all the seats in the flight                       |
-| /book_ticket          | POST         | book a ticket and pay for the ticket immediately                    |
-| /purchase_ticket      | POST         | make a payment for the ticket using visa                            |
-| /make_reservation     | POST         | reserve a seat in the flight                                        |
-| /send_ticket          | POST         | send a copy of the ticket to your email                             |
-| /check_reservation    | GET          | check if your seat is still reserved for you or has been given away |
-|                       |              |                                                                     |
+| /api/get_empty_seats        | GET          | Get a list of empty seats in the flight                       |
+| /api/book      | POST         | book/reserve a ticket |
+| /api/get_reserved_seats     | GET         | get a list of all seats that have been reserved                                        |
+| /          | GET         | Index/ Welcome page                         |
+
+To run the load tester, use the following commands:
+
+locust -H https://`server_name` -f locust.py
+
+Then load the Locust.io user interface in a web browser. Just point to the hostname/IP on port 8089.
+
+`https://<server_name>:8089`

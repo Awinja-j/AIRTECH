@@ -12,6 +12,14 @@ def logout(l):
 def index(l):
     l.client.get("/")
 
+def flight_seats(l):
+    l.client.get("/book/flight_seats")
+def book_ticket(l):
+    l.client.get("/book/book_ticket")
+def profile(l):
+    l.client.get("/auth/profile")
+def profile(l):
+    l.client.get("/auth/profile")
 def profile(l):
     l.client.get("/auth/profile")
 
