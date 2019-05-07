@@ -165,3 +165,7 @@ class Index(Resource):
                     }
             }}}
             return data
+
+class Index1(Resource):
+      def get(self):
+            return "locust"

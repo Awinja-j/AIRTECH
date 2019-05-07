@@ -2,7 +2,7 @@ import os
 from flask_script import Manager
 from flask_restful import Api
 from config import DevelopmentConfig
-from application.auth.views import Register, Login, Index, Profile, Logout
+from application.auth.views import Register, Login, Index, Profile, Logout, Index1
 from application.book.views import Book, Email, Get_All, Get_empty_seats, Get_reserved_seats
 from application.auth.model import User
 from application.book.model import Booking, Email
@@ -27,7 +27,7 @@ api.add_resource(Book, '/api/book')
 api.add_resource(Get_reserved_seats, '/api/get_reserved_seats')
 api.add_resource(Get_All, '/api/get_all')
 api.add_resource(Get_empty_seats, '/api/get_empty_seats')
-api.add_resource(Index, '/')
+api.add_resource(Index1, '/')
 
 manager = Manager(app)
 
