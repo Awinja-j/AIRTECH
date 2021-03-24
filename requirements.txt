@@ -31,7 +31,7 @@ pycparser==2.19
 python-dateutil==2.8.0
 pytz==2018.9
 PyYAML==3.13
-rsa==3.4.2
+rsa==4.1
 s3transfer==0.2.0
 six==1.12.0
 SQLAlchemy==1.2.18
